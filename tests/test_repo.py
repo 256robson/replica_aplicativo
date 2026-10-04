@@ -56,6 +56,7 @@ class Repo(unittest.TestCase):
             "fixes it in yours, so you have an app you can sell.",
             "/plugin marketplace add Jakeschincariol/replica-skill",
             "/plugin install replica-skill@replica-skill",
+            "npx skills add Jakeschincariol/replica-skill",
             "## Fine print",
         ):
             self.assertIn(line, readme)
