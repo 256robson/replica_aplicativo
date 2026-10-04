@@ -49,6 +49,28 @@ method works.
 
 The tools need Python 3.8 or newer. Nothing to pip install.
 
+### Other agents
+
+Install the skills into a project for another supported coding agent with
+[`skills`](https://www.npmjs.com/package/skills):
+
+```bash
+npx skills add Jakeschincariol/replica-skill
+```
+
+Choose the skills and agent when prompted.
+Example, to install `replica-launch` directly
+into a specific agent, use its CLI ID:
+
+```bash
+npx skills add Jakeschincariol/replica-skill --skill replica-launch --agent opencode
+npx skills add Jakeschincariol/replica-skill --skill replica-launch --agent codex
+npx skills add Jakeschincariol/replica-skill --skill replica-launch --agent cursor
+npx skills add Jakeschincariol/replica-skill --skill replica-launch --agent github-copilot
+```
+
+Add the `--global` flag to install globally.
+
 ## The eleven
 
 | command | what it does |
