@@ -100,8 +100,9 @@ def load_reviews(path):
         seen = set()
         for i, raw in enumerate(reader, start=2):
             row = {(k or "").strip().lower(): (v or "").strip() for k, v in raw.items()}
-            url, text = row.get("url", ""), row.get("text", "")
-            if not url or not text or not re.match(r"^https?://", url):
+            url = (row.get("url", "") or "").strip()
+            text = (row.get("text", "") or "").strip()
+            if not url or not text or not re.match(r"^https?://", url, re.I):
                 dropped += 1
                 continue
             key = re.sub(r"\W+", " ", text.lower()).strip()

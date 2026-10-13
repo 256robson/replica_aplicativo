@@ -275,8 +275,14 @@ def _regions(flags, n_rows, n_cols):
 def compare(img_a, img_b, mode="layout", width=480, cols=12, tolerance=24,
             edge_threshold=40):
     """Compare two decoded images. Returns (report dict, diff rows)."""
+    if width <= 0:
+        raise ValueError("width must be > 0")
+    if cols <= 0:
+        raise ValueError("cols must be > 0")
     wa, ha, _ = img_a
     wb, hb, _ = img_b
+    if wa <= 0 or ha <= 0 or wb <= 0 or hb <= 0:
+        raise ValueError("images must have positive dimensions")
     target = min(width, wa, wb)
     a = to_width(img_a, target)
     b = to_width(img_b, target)
@@ -431,11 +437,11 @@ def main(argv=None):
     try:
         a = read_png(args.original)
         b = read_png(args.clone)
-    except (PngError, OSError, zlib.error) as exc:
+        report, diff = compare(a, b, mode=args.mode, width=args.width, cols=args.cols,
+                               tolerance=args.tolerance)
+    except (PngError, OSError, zlib.error, ValueError) as exc:
         print("imgdiff: %s" % exc, file=sys.stderr)
         return 2
-    report, diff = compare(a, b, mode=args.mode, width=args.width, cols=args.cols,
-                           tolerance=args.tolerance)
     report["files"] = {"original": args.original, "clone": args.clone}
     if args.out:
         write_png(args.out, report["compared_at"]["width"],
