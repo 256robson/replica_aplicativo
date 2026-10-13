@@ -14,7 +14,7 @@ MAP_TABLE = "GB_SYS_TABMAP"
 FIELD_MAP_TABLE = "GB_SYS_FLDMAP"
 
 # Nomes de colunas conforme o help. O cabeçalho da tabela de referência diz
-# USR_FLD_NAME, enquanto o exemplo diz USR_FIELD_NAME. Usamos USR_FIELD_NAME (ver README).
+# USR_FLD_NAME, enquanto o exemplo diz USR_FIELD_NAME. Usamos USR_FIELD_NAME, confirmado pelo usuário.
 DDL_TABLE_MAP = """
 CREATE TABLE {schema}.GB_SYS_TABMAP (
     SYS_TABLE_NAME VARCHAR(128) NOT NULL PRIMARY KEY,
