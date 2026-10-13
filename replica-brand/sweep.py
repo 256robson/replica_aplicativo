@@ -42,9 +42,15 @@ BINARY_ASSET_HINT = re.compile(r"\.(png|jpe?g|svg|webp|gif|ico|woff2?|ttf|otf)$"
 
 
 def norm_hex(h):
-    h = h.lower().lstrip("#")
+    h = (h or "").strip().lower()
+    if not h:
+        return None
+    if h.startswith("#"):
+        h = h[1:]
     if len(h) == 3:
         h = "".join(c * 2 for c in h)
+    if not re.fullmatch(r"[0-9a-f]{6}", h):
+        return None
     return "#" + h
 
 
@@ -55,8 +61,10 @@ def build_patterns(avoid, domains):
         if not name:
             continue
         # "Acuity Scheduling" also matches AcuityScheduling and acuity-scheduling
-        parts = [re.escape(p) for p in re.split(r"[\s_-]+", name) if p]
-        pats.append(("name", name, re.compile(r"[\s_-]?".join(parts), re.I)))
+        parts = [re.escape(p) for p in re.split(r"[\s_./-]+", name) if p]
+        if not parts:
+            continue
+        pats.append(("name", name, re.compile(r"(?:[\s_./-]?)".join(parts), re.I)))
     for d in domains:
         d = d.strip().lower()
         if d:
@@ -76,7 +84,7 @@ def is_binary(path):
 
 def sweep(root, avoid=(), domains=(), colors=(), include_replica=False, max_size=2_000_000):
     pats = build_patterns(avoid, domains)
-    cols = {norm_hex(c) for c in colors if HEX.fullmatch(c.strip())}
+    cols = {value for c in colors if (value := norm_hex(c)) is not None}
     hits = []
     root = os.path.abspath(root)
     for dirpath, dirnames, filenames in os.walk(root):

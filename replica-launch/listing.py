@@ -64,7 +64,17 @@ def has_emoji(text):
 
 
 def words(text):
-    return [w for w in re.findall(r"[a-z0-9']+", (text or "").lower()) if w not in STOP]
+    s = (text or "")
+    s = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", s)
+    s = s.lower()
+    return [w for w in re.findall(r"[\w']+", s, re.UNICODE) if w and w not in STOP and not w.isdigit()]
+
+
+def _norm_name(text):
+    text = (text or "")
+    text = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
+    text = re.sub(r"[^\w]+", " ", text.lower(), flags=re.UNICODE)
+    return " ".join(text.split())
 
 
 def lint(listing, avoid=None):
@@ -91,8 +101,11 @@ def lint(listing, avoid=None):
             if n > limit:
                 add("error", store, field, "%d characters, limit is %d (%d over)"
                     % (n, limit, n - limit))
+            norm_value = _norm_name(value)
             for name in avoid:
-                if re.search(r"(?<!\w)%s(?!\w)" % re.escape(name), value, re.I):
+                norm_name = _norm_name(name)
+                if norm_name and (norm_name in norm_value or re.search(
+                        r"(?<!\w)%s(?!\w)" % re.escape(name), value, re.I)):
                     add("error", store, field,
                         "mentions '%s'. Another app's name or trademark in your "
                         "metadata gets the listing rejected and invites a takedown. "
